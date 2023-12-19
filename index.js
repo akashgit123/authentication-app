@@ -5,6 +5,9 @@ const dotenv = require('dotenv').config();
 const port = process.env.PORT;
 const cors = require('cors');
 const morgan = require('morgan');
+const ApiError = require('./utils/apiError');
+const httpStatus = require('http-status');
+const errorHandler = require('./middlewares/errorHandler');
 
 //middlewares
 app.use(cors())
@@ -19,8 +22,11 @@ connectToDb();
 app.use('/api/v1',require('./routes/v1/authUser'));
 
 app.get('/',(req,res)=>{
-    res.send("Worked");
+    // res.send("Worked");
+    throw new ApiError(httpStatus.NOT_FOUND,"Page not found")
 })
+
+app.use(errorHandler)
 
 app.listen(port,()=>{
     console.log(`Server is running on ${port}`);
