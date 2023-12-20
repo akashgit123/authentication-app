@@ -8,7 +8,8 @@ const UserSchema = mongoose.Schema({
     },
     email:{
         type:String,
-        required :[true , "Email is required"]
+        required :[true , "Email is required"],
+        unique : true
     },
     password:{
         type:String,
@@ -16,7 +17,7 @@ const UserSchema = mongoose.Schema({
     },
     image:{
         type:String,
-        required :[true , "Image is required"]
+        // required :[true , "Image is required"]
     },
 },
 {
@@ -24,14 +25,14 @@ const UserSchema = mongoose.Schema({
 })
 
 //middleware
-UserSchema.pre("create",async function(next){
-    const user = this;
-    if(user.isModified("password")){
-        const salt = bcrypt.genSaltSync(10);
-        user.password = bcrypt.hashSync(user.password, salt);
-    }
-    next();
-})
+// UserSchema.pre("create",async function(next){
+//     const user = this;
+//     if(user.isModified("password")){
+//         const salt = bcrypt.genSaltSync(10);
+//         user.password = bcrypt.hashSync(user.password, salt);
+//     }
+//     next();
+// })
 
 
 module.exports = mongoose.model('user',UserSchema);

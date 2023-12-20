@@ -19,14 +19,14 @@ app.use(express.urlencoded({extended:false}));
 connectToDb();
 
 //apis
-app.use('/api/v1',require('./routes/v1/authUser'));
+app.use('/api/v1/user',require('./routes/v1/authUser'));
 
-app.get('/',(req,res)=>{
-    // res.send("Worked");
-    throw new ApiError(httpStatus.NOT_FOUND,"Page not found")
-})
+// app.use((req,res)=>{
+//     // res.send("Worked");
+//     throw new ApiError(httpStatus.NOT_FOUND,"Page not found")
+// })
 
-app.use(errorHandler)
+// app.use(errorHandler)
 
 app.listen(port,()=>{
     console.log(`Server is running on ${port}`);
