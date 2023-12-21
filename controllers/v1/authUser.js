@@ -55,7 +55,14 @@ const loginUser = async(req,res) =>{
             return res.status(400).json({message : "Password not Matched"});
         }
         const secret = process.env.JWT_SECRET;
-        const authToken = await jwt.sign({userId : user._id},secret);
+        const authToken = await jwt.sign(
+            {
+                userId : user._id
+            },
+            secret,
+            {
+                expiresIn :'1h'
+            });
         return res.status(200).json({message : `Login successful ${user.name}`,authToken});
 
     } catch (error) {
@@ -63,4 +70,17 @@ const loginUser = async(req,res) =>{
     }
 }
 
-module.exports = {registerUser , allUsers , loginUser}
+const userProfile = async(req,res) =>{
+    try {
+        const userId = req.user;
+        const user = await UserModel.findById(userId).select("-password");
+        if(!user){
+            return res.status(400).json({message : "User does not exist"});
+        }
+        return res.status(200).json({user});
+    } catch (error) {
+        return res.status(400).json({errorMessage : error})
+    }
+}
+
+module.exports = {registerUser , allUsers , loginUser , userProfile}
