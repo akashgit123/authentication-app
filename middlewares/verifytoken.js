@@ -18,7 +18,7 @@ const verifyToken = async(req,res,next) =>{
         req.user = user.userId;
         next();
     } catch (error) {
-        return res.status(400).json({message : "Something is wrong in your token"});
+        return res.status(400).json({message : "Token expired or modified.. Please login to get new token"});
     }
 }
 
