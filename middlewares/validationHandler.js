@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult,} = require('express-validator');
 
 const validationHandler = async(req,res,next) =>{
     const result = validationResult(req);

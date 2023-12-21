@@ -2,12 +2,10 @@ const UserModel = require('../../models/user');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv').config();
 
 const registerUser =async (req,res) =>{
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array() });
-    }
     try {
         const {name,email,password} = req.body;
         // console.log(req.file);
@@ -46,4 +44,23 @@ const allUsers = async(req,res) =>{
     }
 }
 
-module.exports = {registerUser , allUsers}
+const loginUser = async(req,res) =>{
+    try {
+        const {email,password} = req.body;
+        const user = await UserModel.findOne({email});
+        if(!user){
+            return res.status(400).json({message : "Email not found"});
+        }
+        if(!bcrypt.compareSync(password, user.password)){
+            return res.status(400).json({message : "Password not Matched"});
+        }
+        const secret = process.env.JWT_SECRET;
+        const authToken = await jwt.sign({userId : user._id},secret);
+        return res.status(200).json({message : `Login successful ${user.name}`,authToken});
+
+    } catch (error) {
+        return res.status(400).json({errorMessage : error})
+    }
+}
+
+module.exports = {registerUser , allUsers , loginUser}
