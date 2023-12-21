@@ -8,15 +8,19 @@ const morgan = require('morgan');
 const ApiError = require('./utils/apiError');
 const httpStatus = require('http-status');
 const errorHandler = require('./middlewares/errorHandler');
+const path = require('path')
 
 //middlewares
 app.use(cors())
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:true}));
 
 //db connection
 connectToDb();
+
+//static path
+app.use('/static/',express.static(path.join(path.resolve(),"uploads")));
 
 //apis
 app.use('/api/v1/user',require('./routes/v1/authUser'));
