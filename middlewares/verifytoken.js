@@ -12,14 +12,15 @@ const verifyToken = async(req,res,next) =>{
     if(!token){
         return res.status(400).json({message : "Proivde valid token"});
     }
-
-    const secret = process.env.JWT_SECRET;
-    const {userId} = await jwt.verify(token,secret);
-    if(!userId){
-        return res.status(400).json({message : "Something went wrong middleware"});
+    try {
+        const secret = process.env.JWT_SECRET;
+        const user = await jwt.verify(token,secret);
+        req.user = user.userId;
+        console.log(user);
+        next();
+    } catch (error) {
+        return res.status(400).json({message : "Something is wrong in your token"});
     }
-    req.user = userId;
-    next()
 }
 
 module.exports = {verifyToken}
