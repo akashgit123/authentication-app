@@ -9,6 +9,7 @@ const { verifyToken } = require('../../middlewares/verifytoken');
 route.post('/register',upload.single("image"),controller.registerUser);
 route.post('/login',Validation.loginUser,validationHandler,controller.loginUser);
 route.get('/profile',verifyToken,controller.userProfile);
+route.put('/profile',verifyToken,upload.single("image"),controller.updateProfile);
 route.get('/all',controller.allUsers);
 
 module.exports = route;

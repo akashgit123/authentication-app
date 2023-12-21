@@ -1,6 +1,7 @@
 const UserModel = require('../../models/user');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const path = require('path')
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
@@ -83,4 +84,38 @@ const userProfile = async(req,res) =>{
     }
 }
 
-module.exports = {registerUser , allUsers , loginUser , userProfile}
+const updateProfile = async(req,res)=>{
+    try {
+        const userId = req.user;
+        const userExists = await UserModel.findById(userId).select("-password");
+        if(!userExists){
+            return res.status(400).json({message : "User does not exist"});
+        }
+
+        const updateObj = {};
+        if(req.file){
+            const filePath = path.join(path.resolve(),"/uploads/"+userExists.image)
+            console.log(filePath);
+            if(fs.existsSync(filePath)){
+                fs.unlinkSync(filePath);
+            }
+            updateObj['image'] = req.file.filename
+        }
+        if(req.body.name) { updateObj['name'] = req.body.name }
+        if(req.body.email) { updateObj['email'] = req.body.email }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(userId,{
+            $set :{...updateObj}
+        })
+        if(!updatedUser){
+            return res.status(400).json({Message : "Failed to update"})
+        }
+        return res.status(200).json({Message : "Updated your profile"})
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({errorMessage : error})
+    }
+}
+
+module.exports = {registerUser , allUsers , loginUser , userProfile , updateProfile}

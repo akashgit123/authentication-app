@@ -16,7 +16,6 @@ const verifyToken = async(req,res,next) =>{
         const secret = process.env.JWT_SECRET;
         const user = await jwt.verify(token,secret);
         req.user = user.userId;
-        console.log(user);
         next();
     } catch (error) {
         return res.status(400).json({message : "Something is wrong in your token"});
